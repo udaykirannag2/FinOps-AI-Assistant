@@ -1,0 +1,19 @@
+#!/bin/bash
+# CID Deployment Configuration
+# Copy this file to config.sh and update with your values:
+#   cp config.sh.example config.sh
+
+# AWS Profile names (from: aws configure --profile <name>)
+export MANAGEMENT_PROFILE="management-account"
+export DATA_COLLECTION_PROFILE="data-collection-access-profile"
+
+# Account IDs (get with: aws sts get-caller-identity --profile <profile> --query Account --output text)
+export MANAGEMENT_ACCOUNT_ID=""
+export DATA_COLLECTION_ACCOUNT_ID=""
+
+# Region - use the same region for all stacks
+export AWS_REGION="us-east-1"
+
+# QuickSight user (get from QuickSight console: person icon → top right)
+# Required for Step 3 - e.g. "default/your-username"
+export QUICKSIGHT_USER=""
