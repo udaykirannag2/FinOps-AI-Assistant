@@ -14,6 +14,13 @@ export DATA_COLLECTION_ACCOUNT_ID=""
 # Region - use the same region for all stacks
 export AWS_REGION="us-east-1"
 
-# QuickSight user (get from QuickSight console: person icon → top right)
-# Required for Step 3 - e.g. "default/your-username"
+# QuickSight user - REQUIRED for Step 3
+# Use ONLY the username (e.g., "v_2udan@hotmail.com" or "FinOps-Admin"), NOT "default/username".
+# The CID template adds "default/" automatically. Using "default/username" causes CidAthenaDataSource to fail.
 export QUICKSIGHT_USER=""
+
+# Optional: for copy-cur-to-cid.sh (backfill existing CUR 2.0 into CID)
+# Uncomment and set if copying from a different bucket/prefix:
+# export CUR_SOURCE_BUCKET="curbucketforroot"
+# export CUR_SOURCE_PREFIX="costreports/CUR/data"
+# export CID_DATA_EXPORTS_BUCKET="cid-<DATA_COLLECTION_ACCOUNT_ID>-data-exports"

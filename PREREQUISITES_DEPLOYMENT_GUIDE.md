@@ -32,7 +32,9 @@ The official deployment uses templates that create properly structured buckets a
 - [ ] **Region** – Choose one region for all stacks (e.g., `us-east-1`)
 - [ ] **Data Collection Account** – Dedicated account (not Management)
 - [ ] **Management (Payer) Account** – Source of CUR data
-- [ ] **QuickSight** – Sign up in Data Collection account (~40GB SPICE recommended)
+- [ ] **Quick Suite Enterprise** – Sign up in Data Collection account with at least one **Author Pro** user (~40GB SPICE recommended)
+  - Chat Agents and generative AI features require **Enterprise** edition; Standard does not support them
+  - See [Costs](#costs) below and [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html)
 - [ ] **Permissions** – CloudFormation, CUR/Data Exports, S3, Glue, Athena, QuickSight, Lambda
 
 ---
@@ -101,13 +103,17 @@ aws cost-optimization-hub update-enrollment-status \
 
 ### 3.1 – Prepare QuickSight (Quick Suite)
 
+**Requirements:** Use **Quick Suite Enterprise** with at least one **Author Pro** user. Chat Agents and generative AI features are not available in Standard edition. See [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html).
+
 | # | Action | Status |
 |---|--------|--------|
-| 1 | Sign up for QuickSight in Data Collection account if not already | ☐ |
-| 2 | Choose region matching Step 1 | ☐ |
-| 3 | Select authentication (IAM Identity Center recommended for production) | ☐ |
-| 4 | Purchase ~40GB SPICE capacity (auto-purchase or manual) | ☐ |
-| 5 | Get your **QuickSight username** (person icon → top right) | ☐ |
+| 1 | Sign up for Quick Suite in Data Collection account (Enterprise edition) | ☐ |
+| 2 | Configure at least one **Author Pro** subscription | ☐ |
+| 3 | Choose region matching Step 1 | ☐ |
+| 4 | Select authentication (IAM Identity Center recommended for production) | ☐ |
+| 5 | Purchase ~40GB SPICE capacity (auto-purchase or manual) | ☐ |
+| 6 | **Configure QuickSight service role** (Manage Quick Suite → Security & permissions) for S3/Athena access | ☐ |
+| 7 | Get your **QuickSight username** – use only the username (e.g., `v_2udan@hotmail.com`), **not** `default/username` | ☐ |
 
 ### 3.2 – Deploy Dashboards via CloudFormation
 
@@ -117,7 +123,7 @@ aws cost-optimization-hub update-enrollment-status \
 | 2 | Open [Launch Stack](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://aws-managed-cost-intelligence-dashboards.s3.amazonaws.com/cfn/cid-cfn.yml&stackName=Cloud-Intelligence-Dashboards&param_DeployCUDOSv5=yes&param_DeployKPIDashboard=yes&param_DeployCostIntelligenceDashboard=yes) | ☐ |
 | 3 | Stack name: `Cloud-Intelligence-Dashboards` | ☐ |
 | 4 | Answer both prerequisites = `yes` | ☐ |
-| 5 | Enter **QuickSightUserName** | ☐ |
+| 5 | Enter **QuickSightUser** – username only (e.g., `v_2udan@hotmail.com`), not `default/username` | ☐ |
 | 6 | Select dashboards to install (recommended: all three) | ☐ |
 |    | ☐ **Cost Intelligence Dashboard** | |
 |    | ☐ **CUDOS v5** | |
@@ -161,6 +167,21 @@ See [Dashboards](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-
 ---
 
 ## Optional: Backfill Historical Data
+
+You have two options to get historical CUR 2.0 data into CID:
+
+### Option A: Copy existing CUR 2.0 from your bucket
+
+If you already have CUR 2.0 data in an S3 bucket (e.g., `curbucketforroot` with `costreports/CUR/data/`), use the copy script:
+
+```bash
+cd deploy
+./copy-cur-to-cid.sh
+```
+
+See [deploy/README.md – Copy Existing CUR 2.0 Data](./deploy/README.md#copy-existing-cur-20-data-backfill-option) for configuration (bucket names, prefixes).
+
+### Option B: AWS Support backfill
 
 Request up to 36 months of historical data via AWS Support (from Management account):
 
@@ -212,14 +233,32 @@ cid-cmd deploy --dashboard-id ta-organizational-view
 | Issue | Solution |
 |-------|----------|
 | `No export named cid-DataExports-ReadAccessPolicyARN found` | Step 1 not complete or ManageCUR2 not `yes` |
+| `One or more principals... are not valid QuickSight users` (CidAthenaDataSource) | Use **username only** for QuickSightUser (e.g., `v_2udan@hotmail.com`), not `default/username` |
+| `QuickSight service role required... has not been created yet` | Configure QuickSight role: Manage Quick Suite → Security & permissions |
 | `No export named cid-CidExecArn found` | Deploy foundational dashboards (Step 3) before CORA/FOCUS |
 | No data after 24–48 hours | Check QuickSight Datasets for refresh errors; manually refresh |
 | TAO no data | Deploy Data Collection with Trusted Advisor module; verify Support Plan |
 
 ---
 
+## Costs
+
+For the FinOps AI Assistant (with CID + Chat Agent):
+
+| Component | Est. Monthly Cost |
+|-----------|--------------------|
+| **Quick Suite Author Pro** (1 user) | $40 |
+| **SPICE** (~40GB) | ~$15 or included |
+| **CID infrastructure** (S3, Athena, Glue, Lambda) | ~$5–15 |
+| **Total** | **~$50–70/month** |
+
+Configure your subscription: [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html). You must use **Enterprise edition** and provision at least one **Author Pro** user for Chat Agents and generative AI. Standard edition does not support these capabilities.
+
+---
+
 ## Documentation Links
 
+- [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html)
 - [Deployment in Global Regions](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/deployment-in-global-regions.html)
 - [All CID Dashboards](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/dashboards.html)
 - [CORA Dashboard](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/cora-dashboard.html)

@@ -20,10 +20,12 @@ Before starting, ensure you have:
   - **CORA** (Cost Optimization Recommended Actions)
   - **Trusted Advisor Organizational (TAO)** View
   - **FOCUS Dashboard** (FinOps specification)
-- [ ] **Quick Suite access** – User with Author Pro or Reader Pro permissions  
-  - [Managing users in Amazon QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/managing-users.html)
+- [ ] **Quick Suite Enterprise** with at least one **Author Pro** user  
+  - Chat Agents, Flows, and generative AI are Enterprise-only; Standard edition does not support them  
+  - [Managing users in Amazon QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/managing-users.html)  
+  - [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html)
 
-> **Note:** Quick Suite generative AI features (Author Pro, Reader Pro) incur additional charges. Review [Amazon QuickSight pricing](https://aws.amazon.com/quicksight/pricing/) before proceeding.
+> **Costs:** Author Pro is ~$40/user/month. Review [Configure Amazon Quick Suite subscriptions](https://docs.aws.amazon.com/quicksuite/latest/userguide/managing-qbs-subscriptions.html) and [Amazon QuickSight pricing](https://aws.amazon.com/quicksight/pricing/). See project [README Costs section](README.md#costs).
 
 ---
 

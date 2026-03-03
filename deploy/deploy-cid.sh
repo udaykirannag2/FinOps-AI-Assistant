@@ -130,6 +130,7 @@ deploy_step3() {
         --template-url "${CID_DASHBOARDS_TEMPLATE}" \
         --parameters \
             ParameterKey=QuickSightUser,ParameterValue="${QUICKSIGHT_USER}" \
+            ParameterKey=QuickSightDataSourceRoleName,ParameterValue="" \
             ParameterKey=DeployCUDOSv5,ParameterValue=yes \
             ParameterKey=DeployCostIntelligenceDashboard,ParameterValue=yes \
             ParameterKey=DeployKPIDashboard,ParameterValue=yes \
