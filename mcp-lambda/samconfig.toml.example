@@ -1,0 +1,12 @@
+# Copy to samconfig.toml and edit after first "sam deploy --guided"
+# Then run: sam deploy (no --guided)
+
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "finops-billing-mcp"
+resolve_s3 = true
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+disable_rollback = false
+region = "us-east-1"

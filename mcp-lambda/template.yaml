@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: FinOps Billing MCP Lambda – exposes Cost Explorer, Budgets, Cost Optimization Hub as MCP for Quick Suite
+
+Parameters:
+  MCPFunctionTimeout:
+    Type: Number
+    Default: 60
+    Description: Lambda timeout in seconds (Quick Suite MCP limit is 60s)
+
+Resources:
+  BillingMCPApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowHeaders:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+
+  BillingMCPFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: python3.12
+    Properties:
+      FunctionName: finops-billing-mcp
+      Handler: handler.lambda_handler
+      Runtime: python3.12
+      Timeout: !Ref MCPFunctionTimeout
+      MemorySize: 256
+      CodeUri: .
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            # Cost Explorer
+            - Effect: Allow
+              Action:
+                - ce:GetCostAndUsage
+                - ce:GetCostForecast
+                - ce:GetDimensionValues
+                - ce:GetAnomalies
+                - ce:GetCostAndUsageWithResources
+                - ce:GetTags
+              Resource: "*"
+            # Budgets
+            - Effect: Allow
+              Action:
+                - budgets:DescribeBudgets
+                - budgets:DescribeBudgetActionsForBudget
+              Resource: "*"
+            # Cost Optimization Hub
+            - Effect: Allow
+              Action:
+                - cost-optimization-hub:ListRecommendationSummaries
+                - cost-optimization-hub:ListRecommendations
+                - cost-optimization-hub:GetRecommendation
+              Resource: "*"
+      Events:
+        McpRoot:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BillingMCPApi
+            Path: /
+            Method: ANY
+        McpPath:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BillingMCPApi
+            Path: /mcp
+            Method: ANY
+        WellKnownMcp:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BillingMCPApi
+            Path: /.well-known/mcp
+            Method: GET
+
+Outputs:
+  BillingMCPApiUrl:
+    Description: MCP endpoint URL (API Gateway HTTP API) for Quick Suite integration
+    Value: !Sub "https://${BillingMCPApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: FinOpsBillingMCPApiUrl
+  BillingMCPFunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt BillingMCPFunction.Arn
+    Export:
+      Name: FinOpsBillingMCPArn

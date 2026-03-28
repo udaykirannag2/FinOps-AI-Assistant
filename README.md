@@ -80,6 +80,7 @@ Follow [SETUP_GUIDE.md](./SETUP_GUIDE.md) to create the CID Operations Advisor c
 ├── README.md                    # This file
 ├── DEPLOYMENT.md                # Full deployment guide + Quick Suite challenges
 ├── SETUP_GUIDE.md               # Quick Suite space & chat agent setup
+├── ONE_PAGER.md                 # One-pager + architecture summary
 ├── PREREQUISITES_DEPLOYMENT_GUIDE.md  # CID deployment (official AWS)
 ├── deploy/
 │   ├── config.sh.example        # Configuration template (copy to config.sh)
@@ -87,6 +88,12 @@ Follow [SETUP_GUIDE.md](./SETUP_GUIDE.md) to create the CID Operations Advisor c
 │   ├── deploy-cid.sh            # Automated deployment script
 │   ├── copy-cur-to-cid.sh       # Copy existing CUR 2.0 into CID (backfill option)
 │   └── README.md                # Deploy script documentation
+├── mcp-lambda/                  # Optional: Billing MCP server on Lambda for Quick Suite
+│   ├── README.md                # Deploy & connect to Quick Suite
+│   ├── handler.py               # MCP tools (Cost Explorer, Budgets, COH)
+│   ├── requirements.txt
+│   ├── template.yaml            # SAM template (Lambda + Function URL)
+│   └── samconfig.toml.example
 └── LICENSE
 ```
 
@@ -103,14 +110,22 @@ Management Account          Data Collection Account
 └─────────────────────┘     └─────────────────────────────────┘
 ```
 
+## Optional: Billing MCP Lambda for Quick Suite
+
+To give your Quick Suite Chat Agent **live AWS cost data** (Cost Explorer, Budgets, Cost Optimization Hub) via the Model Context Protocol, deploy the serverless MCP gateway:
+
+- **[mcp-lambda/README.md](./mcp-lambda/README.md)** – Deploy the Lambda, get the MCP URL, and connect it in Quick Suite Integrations → MCP.
+
 ## Documentation
 
 | Document | Description |
 |----------|-------------|
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | **Start here** – Full install guide, Quick Suite permission challenges, troubleshooting |
 | [SETUP_GUIDE.md](./SETUP_GUIDE.md) | Quick Suite Space, Chat Agent, flows, sample prompts |
+| [ONE_PAGER.md](./ONE_PAGER.md) | One-pager and architecture summary |
 | [PREREQUISITES_DEPLOYMENT_GUIDE.md](./PREREQUISITES_DEPLOYMENT_GUIDE.md) | Step-by-step CID deployment (manual or automated) |
 | [deploy/README.md](./deploy/README.md) | Deployment scripts, including [copy-cur-to-cid.sh](./deploy/copy-cur-to-cid.sh) for backfilling existing CUR 2.0 |
+| [mcp-lambda/README.md](./mcp-lambda/README.md) | Billing MCP Lambda – deploy and connect to Quick Suite |
 
 ## Costs
 
